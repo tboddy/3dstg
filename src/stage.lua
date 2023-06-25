@@ -68,7 +68,7 @@ return {
 	end,
 
 	update = function(self)
-		g.fogShader:send("player", g3d.camera.position)
+		g.fogShader:send('player', g3d.camera.position)
 		for i = 1, self.tileCount do
 			if self.tiles[i].active then
 				if self.tiles[i].sky then self.tiles[1].model:setTranslation(g3d.camera.position[1], g3d.camera.position[2], g3d.camera.position[3]) end

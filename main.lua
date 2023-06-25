@@ -16,10 +16,9 @@ function love.load()
 		vsync = true
 	}
 	love.window.setMode(g.width * g.scale, g.height * g.scale, windowConfig)
-	love.graphics.setDefaultFilter("nearest")
+	love.graphics.setDefaultFilter('nearest')
 	love.graphics.setLineStyle('rough')
 	love.graphics.setLineWidth(1 * g.scale)
-	love.graphics.setBackgroundColor(0,0,0)
 	bullets:load()
 	enemies:load()
 	stage:load()
@@ -37,7 +36,7 @@ function love.update(dt)
 end
 
 function love.keypressed(k)
-	if k == "escape" then love.event.push("quit") end
+	if k == 'escape' then love.event.push('quit') end
 end
 
 function love.mousemoved(x,y, dx,dy)

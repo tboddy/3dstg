@@ -121,7 +121,7 @@ return {
 		end
 
 		if jumping and not jumped then
-			if love.keyboard.isDown("space") and self.fuel > 0 then
+			if love.keyboard.isDown('space') and self.fuel > 0 then
 				self.fuel = self.fuel - 4
 				self.speed[2] = self.speed[2] - jump
 				if self.fuel <= 1 then
