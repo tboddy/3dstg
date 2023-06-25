@@ -4,8 +4,8 @@ return {
 	clock = 0,
 	clockLimit = 65535,
 
-	width = 854,
-	height = 480,
+	width = 960,
+	height = 540,
 
 	bossHealth = 0,
 	bossMax = 0,
@@ -22,7 +22,7 @@ return {
 	fogShader = love.graphics.newShader(g3d.shaderpath, 'res/fog.frag'),
 
 	font = function(self)
-		return love.graphics.newFont('res/font.ttf', 13 * self.scale)
+		return love.graphics.newFont('res/font2.ttf', 16)
 	end,
 
 	resetColor = function(self)
@@ -35,7 +35,7 @@ return {
 		local limit = g.width if lLimit then limit = lLimit end
 		love.graphics.setFont(self:font())
 		love.graphics.setColor(self.colors.black)
-		love.graphics.printf(input, x, y + g.scale, limit, align)
+		love.graphics.printf(input, x, y + 1, limit, align)
 		love.graphics.setColor(self.colors.greenLight)
 		love.graphics.printf(input, x, y, limit, align)
 		self:resetColor()

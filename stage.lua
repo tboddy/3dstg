@@ -1,4 +1,4 @@
-local boss = require 'src.boss'
+local boss = require 'boss'
 
 local map = {
 	{0, 1, 1, 1, 1, 1, 1, 1, 0},

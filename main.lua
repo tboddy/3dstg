@@ -1,24 +1,29 @@
 g3d = require 'g3d'
+maid64 = require 'lib.maid'
 hex = require 'lib.hex'
 
-g = require 'src.globals'
-chrome = require 'src.chrome'
-stage = require 'src.stage'
-bullets = require 'src.bullets'
-enemies = require 'src.enemies'
-player = require 'src.player'
+g = require 'globals'
+chrome = require 'chrome'
+stage = require 'stage'
+bullets = require 'bullets'
+enemies = require 'enemies'
+player = require 'player'
 
 local winWidth, winHeight = love.window.getDesktopDimensions()
 
 function love.load()
 	love.window.setTitle('lol rak game')
 	local windowConfig = {
-		vsync = true
+		vsync = true,
+		minwidth = g.width / 2,
+		minheight = g.height / 2,
+		resizable = true
 	}
 	love.window.setMode(g.width * g.scale, g.height * g.scale, windowConfig)
+	maid64.setup(g.width, g.height)
 	love.graphics.setDefaultFilter('nearest')
 	love.graphics.setLineStyle('rough')
-	love.graphics.setLineWidth(1 * g.scale)
+	love.graphics.setLineWidth(1)
 	bullets:load()
 	enemies:load()
 	stage:load()
@@ -43,10 +48,16 @@ function love.mousemoved(x,y, dx,dy)
 	g3d.camera.firstPersonLook(dx,-dy)
 end
 
+function love.resize(width, height)
+	maid64.resize(width, height)
+end
+
 function love.draw()
+	maid64.start()
 	stage:draw()
 	bullets:draw()
 	enemies:draw()
 	chrome:draw()
+	maid64.finish()
 end
 
