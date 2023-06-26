@@ -22,7 +22,7 @@ return {
 	fogShader = love.graphics.newShader(g3d.shaderpath, 'res/fog.frag'),
 
 	font = function(self)
-		return love.graphics.newFont('res/font2.ttf', 32)
+		return love.graphics.newFont('res/font.ttf', 32)
 	end,
 
 	resetColor = function(self)
