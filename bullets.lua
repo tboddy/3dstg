@@ -2,7 +2,7 @@ local bulletTexture
 
 return {
 
-	count = 1024,
+	count = 2048,
 	current = 0,
 	list = {},
 
@@ -17,6 +17,7 @@ return {
 			self.list[i].position[2] = spawner.position[2] + 0.5
 			self.list[i].position[3] = spawner.position[3]
 			self.list[i].clock = 0
+			self.list[i].visible = spawner.player or false
 			self.list[i].size = spawner.size or 1
 			self.list[i].player = spawner.player or false
 			self.list[i].speed = spawner.speed
@@ -49,6 +50,7 @@ return {
 				velocity = {0, 0, 0},
 				type = 0,
 				clock = 0,
+				visible = false,
 				player = false,
 				model = false,
 				size = 1
@@ -61,15 +63,18 @@ return {
 		for i = 1, self.count do
 			if self.list[i].active then
 				self.current = self.current + 1
-				self.list[i].clock = self.list[i].clock + 1
 				self.list[i].position[1] = self.list[i].position[1] + self.list[i].velocity[1] * g.dt
 				self.list[i].position[2] = self.list[i].position[2] + self.list[i].velocity[2] * g.dt
 				self.list[i].position[3] = self.list[i].position[3] + self.list[i].velocity[3] * g.dt
 
+				if self.list[i].clock >= 2 and not self.list[i].visible then
+					self.list[i].visible = true
+				end
+
 				-- against tiles
 				for j = 1, stage.tileCount do
 					if stage.tiles[j].active then
-						if stage.tiles[j].model:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.4) then
+						if stage.tiles[j].model:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.5) then
 							self:killBullet(i, true)
 						end
 					end
@@ -79,7 +84,7 @@ return {
 				if self.list[i].player then
 					for j = 1, enemies.count do
 						if enemies.list[j].active then
-							if enemies.list[j].hitbox:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.4) then
+							if enemies.list[j].hitbox:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.5) then
 								enemies.list[j].hit = true
 								self:killBullet(i, true)
 							end
@@ -93,6 +98,8 @@ return {
 
 				if self.list[i].clock >= 3600 then self:killBullet(i) end
 
+				self.list[i].clock = self.list[i].clock + 1
+
 			end
 		end
 		if self.killAll then
@@ -102,7 +109,7 @@ return {
 
 	draw = function(self)
 		for i = 1, self.count do
-			if self.list[i].active then
+			if self.list[i].active and self.list[i].visible then
 		    local x_1, x_2, x_3 = g3d.camera.viewMatrix[1], g3d.camera.viewMatrix[2], g3d.camera.viewMatrix[3]
 		    local y_1, y_2, y_3 = g3d.camera.viewMatrix[5], g3d.camera.viewMatrix[6], g3d.camera.viewMatrix[7]
 		    local x1,y1,z1 = self.list[i].position[1], self.list[i].position[2], self.list[i].position[3]

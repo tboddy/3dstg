@@ -1,20 +1,25 @@
-local grid = 16
+local grid = 32
 local bottomY = g.height - grid * 2
 local rightX = (g.width - grid)
 
-local bossW = g.width - grid * 2
-local bossX = 16
+local bossW = g.width - grid * 11
+local barH = 24
 
 return {
 
+	drawScore = function()
+		g:label('Score 0000000000', 0, grid, 'right', g.width - grid)
+		g:label('High 0000000000', 0, grid * 2.25, 'right', g.width - grid)
+	end,
+
 	drawFuel = function()
-		g:label('Jump', grid, bottomY - grid * 1.5)
+		g:label('^', grid, bottomY + 6)
 		love.graphics.setColor(g.colors.black)
-		love.graphics.rectangle('line', grid, bottomY + 1, player.fuelMax, grid)
+		love.graphics.rectangle('line', grid * 2.5, bottomY + 4 + 2, player.fuelMax * 2, barH)
 		love.graphics.setColor(g.colors.greenLight)
-		love.graphics.rectangle('line', grid, bottomY, player.fuelMax, grid)
+		love.graphics.rectangle('line', grid * 2.5, bottomY + 4, player.fuelMax * 2, barH)
 		if player.fuel > 0 then
-			love.graphics.rectangle('fill', grid, bottomY, player.fuel, grid)
+			love.graphics.rectangle('fill', grid * 2.5, bottomY + 4, player.fuel * 2, barH)
 		end
 	end,
 
@@ -26,11 +31,11 @@ return {
 	drawBoss = function()
 		if g.bossHealth > 0 then
 			love.graphics.setColor(g.colors.black)
-			love.graphics.rectangle('line', grid, grid + 1, g.bossMax * (bossW / g.bossMax), grid)
+			love.graphics.rectangle('line', grid, grid + 4 + 2, g.bossMax * (bossW / g.bossMax), barH)
 			love.graphics.setColor(g.colors.greenLight)
-			love.graphics.rectangle('line', grid, grid, g.bossMax * (bossW / g.bossMax), grid)
-			love.graphics.rectangle('fill', grid, grid, g.bossHealth * (bossW / g.bossMax), grid)
-			g:label('Mike Goutokuji', 16, 16 * 2.5)
+			love.graphics.rectangle('line', grid, grid + 4, g.bossMax * (bossW / g.bossMax), barH)
+			love.graphics.rectangle('fill', grid, grid + 4, g.bossHealth * (bossW / g.bossMax), barH)
+			g:label('Mike Goutokuji', grid, grid * 2.25)
 		end
 	end,
 
@@ -39,7 +44,7 @@ return {
 	end,
 
 	drawDebug = function()
-		g:label('Enemies ' .. enemies.current, 0, bottomY - grid * 1.5, 'right', rightX)
+		g:label('Enemies ' .. enemies.current, 0, bottomY - grid * 1.25, 'right', rightX)
 		g:label('Bullets ' .. bullets.current, 0, bottomY, 'right', rightX)
 	end,
 
@@ -47,10 +52,11 @@ return {
 	end,
 
 	draw = function(self)
+		self.drawScore()
 		self.drawFuel()
-		-- self.drawAim()
 		self.drawHealth()
 		self.drawBoss()
+		-- self.drawAim()
 		self.drawDebug()
 		g:resetColor()
 	end,

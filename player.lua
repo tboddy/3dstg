@@ -43,7 +43,6 @@ return {
 
 	moveAndSlide = function(self, mx,my,mz)
 		local len,x,y,z,nx,ny,nz = self:collisionTest(mx,my,mz)
-
 		self.position[1] = self.position[1] + mx
 		self.position[2] = self.position[2] + my
 		self.position[3] = self.position[3] + mz
@@ -201,7 +200,7 @@ return {
 
 	load = function(self)
 		self.fuel = self.fuelMax
-		self.position = setmetatable({-20,-2,0}, {})
+		self.position = setmetatable({-20,-1,0}, {})
 		self.speed = setmetatable({0,0,0}, {})
 		self.lastSpeed = setmetatable({0,0,0}, {})
 		self.normal = setmetatable({0,1,0}, {})

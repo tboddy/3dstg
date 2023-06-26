@@ -26,10 +26,9 @@ return {
 		    {-1,0, 1},
 		    {1, 0, 1},
 		    {1, 0,-1},
-		    {-1,0, 1}
-				}, enemyImage)
-			self.list[i].model:setTransform({0,spawner.size,0}, nil, {spawner.size,spawner.size,spawner.size})
+		    {-1,0, 1}}, enemyImage)
 			self.list[i].hitbox = g3d.newModel('res/enemies/hitbox.obj', 'res/enemies/hitbox.png', self.list[i].position)
+			self.list[i].model:setTransform({0,-spawner.size,0}, nil, {spawner.size,spawner.size,spawner.size})
 			self.list[i].hitbox:setTransform({0, -spawner.size / 2, 0}, nil, {spawner.size / 2,spawner.size / 2,spawner.size / 2})
 			self.list[i].updater = spawner.updater or nil
 		end
@@ -44,6 +43,7 @@ return {
 				clock = 0,
 				model = nil,
 				hitbox = nil,
+				circle = nil,
 				updater = nil,
 				hit = false,
 				boss = false,
@@ -92,6 +92,7 @@ return {
 		    local x2,y2,z2 = self.list[i].position[1] - y_1, self.list[i].position[2] - y_2, self.list[i].position[3] - y_3
 		    local r = 0.5
 		    n_x, n_y, n_z = x_1*r, x_2*r, x_3*r
+		    
 		    self.list[i].model.mesh:setVertex(1, x1-n_x, y1-n_y, z1-n_z, 0,0)
 		    self.list[i].model.mesh:setVertex(2, x1+n_x, y1+n_y, z1+n_z, 1,0)
 		    self.list[i].model.mesh:setVertex(3, x2-n_x, y2-n_y, z2-n_z, 0,1)
@@ -99,6 +100,7 @@ return {
 		    self.list[i].model.mesh:setVertex(5, x2+n_x, y2+n_y, z2+n_z, 1,1)
 		    self.list[i].model.mesh:setVertex(6, x1+n_x, y1+n_y, z1+n_z, 1,0)
 		    self.list[i].model:draw(g.fogShader)
+
 		    -- self.list[i].hitbox:draw()
 			end
 		end
