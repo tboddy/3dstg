@@ -25,7 +25,7 @@ return {
 
 	drawAim = function()
 		love.graphics.setColor(g.colors.greenLight)
-		love.graphics.circle('line', (g.width / 2 - 4 + 4), (g.height / 2 + 4), 48)
+		love.graphics.circle('line', g.width / 2, g.height / 2, 48)
 	end,
 
 	drawBoss = function()
@@ -35,7 +35,7 @@ return {
 			love.graphics.setColor(g.colors.greenLight)
 			love.graphics.rectangle('line', grid, grid + 4, g.bossMax * (bossW / g.bossMax), barH)
 			love.graphics.rectangle('fill', grid, grid + 4, g.bossHealth * (bossW / g.bossMax), barH)
-			g:label('Mike Goutokuji', grid, grid * 2.25)
+			g:label('hairy ball fart', grid, grid * 2.25)
 		end
 	end,
 
@@ -44,8 +44,9 @@ return {
 	end,
 
 	drawDebug = function()
-		g:label('Enemies ' .. enemies.current, 0, bottomY - grid * 1.25, 'right', rightX)
-		g:label('Bullets ' .. bullets.current, 0, bottomY, 'right', rightX)
+		-- g:label('Enemies ' .. enemies.current, 0, bottomY - grid * 1.25, 'right', rightX)
+		-- g:label('Bullets ' .. bullets.current, 0, bottomY, 'right', rightX)
+		-- g:label(debug, 0, bottomY, 'right', rightX)
 	end,
 
 	load = function()
@@ -56,7 +57,7 @@ return {
 		self.drawFuel()
 		self.drawHealth()
 		self.drawBoss()
-		-- self.drawAim()
+		self.drawAim()
 		self.drawDebug()
 		g:resetColor()
 	end,

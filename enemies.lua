@@ -4,7 +4,6 @@ return {
 	current = 0,
 	list = {},
 
-
 	spawn = function(self, spawner)
 		i = -1
 		for j = 1, self.count do if i == -1 and not self.list[j].active then i = j break end end
@@ -13,12 +12,16 @@ return {
 			self.list[i].position[1] = spawner.position[1]
 			self.list[i].position[2] = spawner.position[2]
 			self.list[i].position[3] = spawner.position[3]
+			self.list[i].velocity[1] = 0
+			self.list[i].velocity[2] = 0
+			self.list[i].velocity[3] = 0
+			self.list[i].speed = spawner.speed
 			self.list[i].clock = 0
 			self.list[i].hit = false
 			self.list[i].boss = spawner.boss or false
 			self.list[i].nums = {}
 			self.list[i].health = spawner.health
-			self.list[i].size = spawner.size / 5 * 4
+			self.list[i].size = spawner.size
 			local enemyImage = love.graphics.newImage('res/enemies/' .. spawner.image .. '.png')
 			self.list[i].model = g3d.newModel({
 		    {-1,0,-1},
@@ -28,7 +31,7 @@ return {
 		    {1, 0,-1},
 		    {-1,0, 1}}, enemyImage)
 			self.list[i].hitbox = g3d.newModel('res/enemies/hitbox.obj', 'res/enemies/hitbox.png', self.list[i].position)
-			self.list[i].model:setTransform({0,-spawner.size,0}, nil, {spawner.size,spawner.size,spawner.size})
+			self.list[i].model:setTransform({0,0,0}, nil, nil)
 			self.list[i].hitbox:setTransform({0, -spawner.size / 2, 0}, nil, {spawner.size / 2,spawner.size / 2,spawner.size / 2})
 			self.list[i].updater = spawner.updater or nil
 		end
@@ -76,6 +79,7 @@ return {
 			if self.list[i].active then
 				self.current = self.current + 1
 				if self.list[i].updater then self.list[i].updater(i) end
+		    self.list[i].hitbox:setTransform(self.list[i].position)
 				self.list[i].clock = self.list[i].clock + 1
 				if self.list[i].clock >= g.clockLimit then self.list[i].clock = 60 end
 				if self.list[i].hit then self:hitEnemy(i) end
@@ -89,16 +93,17 @@ return {
 		    local x_1, x_2, x_3 = g3d.camera.viewMatrix[1], g3d.camera.viewMatrix[2], g3d.camera.viewMatrix[3]
 		    local y_1, y_2, y_3 = g3d.camera.viewMatrix[5], g3d.camera.viewMatrix[6], g3d.camera.viewMatrix[7]
 		    local x1,y1,z1 = self.list[i].position[1], self.list[i].position[2], self.list[i].position[3]
-		    local x2,y2,z2 = self.list[i].position[1] - y_1, self.list[i].position[2] - y_2, self.list[i].position[3] - y_3
-		    local r = 0.5
+		    local x2,y2,z2 = self.list[i].position[1] - y_1 * self.list[i].size, self.list[i].position[2] - y_2 * self.list[i].size, self.list[i].position[3] - y_3 * self.list[i].size
+		    local r = 0.5 * self.list[i].size
 		    n_x, n_y, n_z = x_1*r, x_2*r, x_3*r
-		    
-		    self.list[i].model.mesh:setVertex(1, x1-n_x, y1-n_y, z1-n_z, 0,0)
-		    self.list[i].model.mesh:setVertex(2, x1+n_x, y1+n_y, z1+n_z, 1,0)
-		    self.list[i].model.mesh:setVertex(3, x2-n_x, y2-n_y, z2-n_z, 0,1)
-		    self.list[i].model.mesh:setVertex(4, x2-n_x, y2-n_y, z2-n_z, 0,1)
-		    self.list[i].model.mesh:setVertex(5, x2+n_x, y2+n_y, z2+n_z, 1,1)
-		    self.list[i].model.mesh:setVertex(6, x1+n_x, y1+n_y, z1+n_z, 1,0)
+
+
+		    self.list[i].model.mesh:setVertex(1, x1-n_x, y1-n_y - self.list[i].size / 2, z1-n_z, 0,0)
+		    self.list[i].model.mesh:setVertex(2, x1+n_x, y1+n_y - self.list[i].size / 2, z1+n_z, 1,0)
+		    self.list[i].model.mesh:setVertex(3, x2-n_x, y2-n_y - self.list[i].size / 2, z2-n_z, 0,1)
+		    self.list[i].model.mesh:setVertex(4, x2-n_x, y2-n_y - self.list[i].size / 2, z2-n_z, 0,1)
+		    self.list[i].model.mesh:setVertex(5, x2+n_x, y2+n_y - self.list[i].size / 2, z2+n_z, 1,1)
+		    self.list[i].model.mesh:setVertex(6, x1+n_x, y1+n_y - self.list[i].size / 2, z1+n_z, 1,0)
 		    self.list[i].model:draw(g.fogShader)
 
 		    -- self.list[i].hitbox:draw()

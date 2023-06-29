@@ -13,6 +13,7 @@ return {
 	tau = math.pi * 2,
 
 	dt = 1,
+	debug = '',
 
 	colors = {
 		black = hex.rgb('060608'),

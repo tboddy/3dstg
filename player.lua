@@ -4,10 +4,10 @@ local accumulator = 0
 local frametime = 1/60
 local rollingAverage = {}
 
-local speed = 0.05
+local speed = 0.06
 local friction = 0.8
 local gravity = 0.01
-local jump = 0.015
+local jump = 0.0175
 local maxFallSpeed = 0.35
 
 local jumping = false
@@ -134,7 +134,7 @@ return {
 
 		if not jumping or (jumping and jumped) then
 			if self.fuel < self.fuelMax then
-				self.fuel = self.fuel + 8
+				self.fuel = self.fuel + 3
 				if self.fuel > self.fuelMax then self.fuel = self.fuelMax end
 			end
 		end
@@ -200,16 +200,16 @@ return {
 
 	load = function(self)
 		self.fuel = self.fuelMax
-		self.position = setmetatable({-20,-1,0}, {})
+		self.position = setmetatable({0,-5,0}, {})
 		self.speed = setmetatable({0,0,0}, {})
 		self.lastSpeed = setmetatable({0,0,0}, {})
 		self.normal = setmetatable({0,1,0}, {})
-		self.radius = 0.5
+		self.radius = 1
 		self.onGround = false
 		self.stepDownSize = 0.075
 		self.collisionModels = {}
 		for i = 1, stage.tileCount do
-			if stage.tiles[i].active then
+			if stage.tiles[i].active and not stage.tiles[i].sky then
 				self:addCollisionModel(stage.tiles[i].model)
 			end
 		end

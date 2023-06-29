@@ -14,7 +14,7 @@ return {
 		if i > -1 then
 			self.list[i].active = true
 			self.list[i].position[1] = spawner.position[1]
-			self.list[i].position[2] = spawner.position[2] + 0.5
+			self.list[i].position[2] = spawner.position[2] - 0.5
 			self.list[i].position[3] = spawner.position[3]
 			self.list[i].clock = 0
 			self.list[i].visible = spawner.player or false
@@ -73,7 +73,7 @@ return {
 
 				-- against tiles
 				for j = 1, stage.tileCount do
-					if stage.tiles[j].active then
+					if stage.tiles[j].active and not stage.tiles[j].sky then
 						if stage.tiles[j].model:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.5) then
 							self:killBullet(i, true)
 						end

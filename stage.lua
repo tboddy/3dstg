@@ -1,19 +1,5 @@
 local boss = require 'boss'
 
-local map = {
-	{0, 1, 1, 1, 1, 1, 1, 1, 0},
-	{3, 5, 0, 0, 0, 0, 0, 6, 4},
-	{3, 0, 0, 0, 0, 0, 0, 0, 4},
-	{3, 0, 0, 0, 0, 0, 0, 0, 4},
-	{3, 0, 0, 0, 0, 0, 0, 0, 4},
-	{3, 0, 0, 0, 0, 0, 0, 0, 4},
-	{3, 0, 0, 0, 0, 0, 0, 0, 4},
-	{3, 7, 0, 0, 0, 0, 0, 8, 4},
-	{0, 2, 2, 2, 2, 2, 2, 2, 0}
-}
-
-local stageModel, stageTexture
-
 return {
 
 	tileCount = 1024,
@@ -36,37 +22,10 @@ return {
 				model = nil
 			})
 		end
-
 		self:spawn('sky', 'sky', 0, 0, 0, nil, {100,100,100}, true)
-
-		self:spawn('arena', 'arena', 0, 2, 0, nil, {6, -6, 6})
-
-		-- for x = 1, #map do
-		-- 	for y = 1, #map do
-		-- 		self:spawn('floor-flat', 'floor-flat-1', (x - 1 - #map / 2) * 8 + 4, 0, (y - 1 - #map / 2) * 8 + 4)
-		-- 		if map[y][x] ~= 0 then
-		-- 			stageModel = nil
-		-- 			stageTexture = nil
-		-- 			if map[y][x] == 1 then stageModel = 'wall-flat-north'
-		-- 			elseif map[y][x] == 2 then stageModel = 'wall-flat-south'
-		-- 			elseif map[y][x] == 3 then stageModel = 'wall-flat-west'
-		-- 			elseif map[y][x] == 4 then stageModel = 'wall-flat-east'
-		-- 			elseif map[y][x] == 5 then stageModel = 'wall-flat-corner-nw'
-		-- 			elseif map[y][x] == 6 then stageModel = 'wall-flat-corner-ne'
-		-- 			elseif map[y][x] == 7 then stageModel = 'wall-flat-corner-sw'
-		-- 			elseif map[y][x] == 8 then stageModel = 'wall-flat-corner-se' end
-		-- 			stageTexture = 'wall-flat-1'
-		-- 			if stageModel and stageTexture then
-		-- 				for i = 1, 3 do
-		-- 					self:spawn(stageModel, stageTexture, (x - 1 - #map / 2) * 8 + 4, -8 * (i - 1), (y - 1 - #map / 2) * 8 + 4)
-		-- 				end
-		-- 			end
-		-- 		end
-		-- 	end
-		-- end
-
+		self:spawn('ground', 'ground', 0, 2, 0, nil, {4.1, -4, 4.1})
+		self:spawn('cylinder', 'cylinder', 0, 2, 0, nil, {4, -4, 4})
 		boss.oneSpawn()
-
 	end,
 
 	update = function(self)
