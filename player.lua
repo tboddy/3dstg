@@ -183,6 +183,9 @@ return {
 
 		g3d.camera.lookInDirection()
 		self:updatePlayerShot()
+		self.pos.x = self.position[1]
+		self.pos.y = self.position[2]
+		self.pos.z = self.position[3]
 	end,
 
 	update = function(self)
@@ -205,6 +208,7 @@ return {
 	load = function(self)
 		self.fuel = self.fuelMax
 		self.position = setmetatable({-20,-3,0}, {})
+		self.pos = cpml.vec3.new(self.position[1], self.position[2], self.position[3])
 		self.speed = setmetatable({0,0,0}, {})
 		self.lastSpeed = setmetatable({0,0,0}, {})
 		self.normal = setmetatable({0,1,0}, {})

@@ -39,7 +39,7 @@ return {
 				model = nil
 			})
 		end
-		self:spawn('sky', 'sky', 0, 0, 0, nil, {150,150,150}, true)
+		self:spawn('sky', 'sky', 0, 0, 0, nil, {6, -6, 6}, true)
 
 		self:spawn('ground', 'ground', 0, 2, 0, nil, {4.5, -2.5, 4.5})
 		self:spawn('cylinder', 'blank', 0, 2, 0, nil, {4.25, -5, 4.25})

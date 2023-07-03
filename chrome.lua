@@ -11,7 +11,7 @@ return {
 
 	drawScore = function()
 		g:label('SCORE 0000000000', 0, grid, 'right', g.width - grid)
-		g:label('HIGH  0000000000', 0, grid * 2.25, 'right', g.width - grid)
+		-- g:label('HIGH  0000000000', 0, grid * 2.25, 'right', g.width - grid)
 	end,
 
 	drawFuel = function()
@@ -53,7 +53,9 @@ return {
 	end,
 
 	drawHealth = function()
-		g:label('100', 0, bottomY, 'center', g.width)
+
+		g:label('100', 0, bottomY - grid + 4, 'center', g.width, true)
+
 	end,
 
 	drawDebug = function()

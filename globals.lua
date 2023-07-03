@@ -17,7 +17,7 @@ return {
 	debug = '',
 
 	colors = {
-		black = hex.rgb('000000'),
+		black = hex.rgb('060608'),
 		greenLight = hex.rgb('92dcba')
 	},
 
@@ -27,6 +27,10 @@ return {
 
 	font = function(self)
 		return love.graphics.newFont('res/font.ttf', 32)
+	end,
+
+	bigFont = function(self)
+		return love.graphics.newFont('res/font.ttf', 64)
 	end,
 
 	resetColor = function(self)
@@ -39,7 +43,7 @@ return {
 		local x = 0 if lX then x = lX end
 		local align = 'left' if lAlign then align = lAlign end
 		local limit = g.width if lLimit then limit = lLimit end
-		love.graphics.setFont(self:font())
+		love.graphics.setFont(big and self:bigFont() or self:font())
 		love.graphics.setColor(self.colors.black)
 		love.graphics.printf(input, x, y + 2, limit, align)
 		love.graphics.setColor(self.colors.greenLight)

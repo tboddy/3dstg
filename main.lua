@@ -1,5 +1,6 @@
 tick = require 'lib.tick'
 g3d = require 'g3d'
+cpml = require 'cpml'
 maid64 = require 'lib.maid'
 hex = require 'lib.hex'
 
@@ -13,6 +14,7 @@ player = require 'player'
 local winWidth, winHeight = love.window.getDesktopDimensions()
 
 function love.load()
+	love.graphics.setBackgroundColor(g.colors.black)
 	tick.framerate = 60
 	love.window.setTitle('lol rak game')
 	local windowConfig = {
