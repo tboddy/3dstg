@@ -1,3 +1,4 @@
+tick = require 'lib.tick'
 g3d = require 'g3d'
 maid64 = require 'lib.maid'
 hex = require 'lib.hex'
@@ -12,9 +13,10 @@ player = require 'player'
 local winWidth, winHeight = love.window.getDesktopDimensions()
 
 function love.load()
+	tick.framerate = 60
 	love.window.setTitle('lol rak game')
 	local windowConfig = {
-		vsync = true,
+		vsync = false,
 		minwidth = g.width / 2,
 		minheight = g.height / 2,
 		resizable = true
@@ -23,7 +25,7 @@ function love.load()
 	maid64.setup(g.width, g.height)
 	love.graphics.setDefaultFilter('nearest')
 	love.graphics.setLineStyle('rough')
-	love.graphics.setLineWidth(1)
+	love.graphics.setLineWidth(2)
 	bullets:load()
 	enemies:load()
 	stage:load()
@@ -36,6 +38,7 @@ function love.update(dt)
 	stage:update()
 	bullets:update()
 	enemies:update()
+	chrome:update()
 	g.clock = g.clock + 1
 	if g.clock >= g.clockLimit then g.clock = 0 end
 end
@@ -60,4 +63,3 @@ function love.draw()
 	chrome:draw()
 	maid64.finish()
 end
-

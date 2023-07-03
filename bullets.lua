@@ -1,4 +1,4 @@
-local bulletTexture
+local bulletImages, bulletTypes = {}, {'red', 'green', 'blue', 'yellow', 'gray'}
 
 return {
 
@@ -16,23 +16,27 @@ return {
 			self.list[i].position[1] = spawner.position[1]
 			self.list[i].position[2] = spawner.position[2] - 0.5
 			self.list[i].position[3] = spawner.position[3]
+			self.list[i].target[1] = spawner.target[1]
+			self.list[i].target[2] = spawner.target[2]
+			self.list[i].target[3] = spawner.target[3]
 			self.list[i].clock = 0
 			self.list[i].visible = spawner.player or false
 			self.list[i].size = spawner.size or 1
+			self.list[i].nums = {}
 			self.list[i].player = spawner.player or false
 			self.list[i].speed = spawner.speed
 			self.list[i].velocity[1] = (spawner.target[1] - spawner.position[1]) * spawner.speed
 			self.list[i].velocity[2] = (spawner.target[2] - spawner.position[2]) * spawner.speed
 			self.list[i].velocity[3] = (spawner.target[3] - spawner.position[3]) * spawner.speed
-			bulletTexture = love.graphics.newImage('res/bullets/' .. spawner.image .. '.png')
+			self.list[i].image = spawner.image
+			self.list[i].updater = spawner.updater or nil
 			self.list[i].model = g3d.newModel({
 		    {-1,0,-1},
 		    {1, 0,-1},
 		    {-1,0, 1},
 		    {1, 0, 1},
 		    {1, 0,-1},
-		    {-1,0, 1}
-				}, bulletTexture)
+		    {-1,0, 1}})
 		end
 	end,
 
@@ -42,12 +46,23 @@ return {
 	end,
 
 	load = function(self)
+
+		for i = 1, #bulletTypes do
+			local images = {}
+			for j = 1, 4 do
+				table.insert(images, love.graphics.newImage('res/bullets/' .. bulletTypes[i] .. '-' .. j .. '.png'))
+			end
+			bulletImages[bulletTypes[i]] = images
+		end
+
+
 		for i = 1, self.count do
 			table.insert(self.list, {
 				active = false,
 				position = {0, 0, 0},
 				image = '',
 				velocity = {0, 0, 0},
+				target = {0, 0, 0},
 				type = 0,
 				clock = 0,
 				visible = false,
@@ -58,11 +73,14 @@ return {
 		end
 	end,
 
+	bulletLimit = 45,
+
 	update = function(self)
 		self.current = 0
 		for i = 1, self.count do
 			if self.list[i].active then
 				self.current = self.current + 1
+				if self.list[i].updater then self.list[i].updater(i) end
 				self.list[i].position[1] = self.list[i].position[1] + self.list[i].velocity[1] * g.dt
 				self.list[i].position[2] = self.list[i].position[2] + self.list[i].velocity[2] * g.dt
 				self.list[i].position[3] = self.list[i].position[3] + self.list[i].velocity[3] * g.dt
@@ -71,14 +89,24 @@ return {
 					self.list[i].visible = true
 				end
 
-				-- against tiles
-				for j = 1, stage.tileCount do
-					if stage.tiles[j].active and not stage.tiles[j].sky then
-						if stage.tiles[j].model:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.5) then
-							self:killBullet(i, true)
-						end
-					end
+				if self.list[i].clock % 16 == 0 then
+					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][1])
+				elseif self.list[i].clock % 16 == 4 then
+					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][2])
+				elseif self.list[i].clock % 16 == 8 then
+					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][3])
+				elseif self.list[i].clock % 16 == 12 then
+					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][4])
 				end
+
+				-- against tiles
+				-- for j = 1, stage.tileCount do
+				-- 	if stage.tiles[j].active and not stage.tiles[j].sky and not stage.tiles[j].prop then
+				-- 		if stage.tiles[j].model:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.5) then
+				-- 			self:killBullet(i, true)
+				-- 		end
+				-- 	end
+				-- end
 
 				-- against enemies
 				if self.list[i].player then
@@ -90,13 +118,19 @@ return {
 							end
 						end
 					end
-
 				end
 
 				-- kill all
 				if self.killAll and not self.list[i].player then self:killBullet(i) end
 
-				if self.list[i].clock >= 3600 then self:killBullet(i) end
+				-- if self.list[i].position[2] > 1 or
+				-- 	self.list[i].position[2] < -self.bulletLimit or
+				-- 	self.list[i].position[1] > self.bulletLimit or
+				-- 	self.list[i].position[1] < -self.bulletLimit or
+				-- 	self.list[i].position[3] > self.bulletLimit or
+				-- 	self.list[i].position[3] < -self.bulletLimit
+				-- 	then self:killBullet(i) end
+				if self.list[i].clock > 240 then self:killBullet(i) end
 
 				self.list[i].clock = self.list[i].clock + 1
 
@@ -108,6 +142,8 @@ return {
 	end,
 
 	draw = function(self)
+
+
 		for i = 1, self.count do
 			if self.list[i].active and self.list[i].visible then
 		    local x_1, x_2, x_3 = g3d.camera.viewMatrix[1], g3d.camera.viewMatrix[2], g3d.camera.viewMatrix[3]
@@ -122,9 +158,11 @@ return {
 		    self.list[i].model.mesh:setVertex(4, x2-n_x, y2-n_y, z2-n_z, 0,1)
 		    self.list[i].model.mesh:setVertex(5, x2+n_x, y2+n_y, z2+n_z, 1,1)
 		    self.list[i].model.mesh:setVertex(6, x1+n_x, y1+n_y, z1+n_z, 1,0)
-		    self.list[i].model:draw(g.fogShader)
+		    if self.list[i].player then self.list[i].model:draw(g.transparentShader)
+		    else self.list[i].model:draw(g.fogShader) end
 			end
 		end
+
 	end
 
 }

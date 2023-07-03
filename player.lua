@@ -6,12 +6,15 @@ local rollingAverage = {}
 
 local speed = 0.06
 local friction = 0.8
-local gravity = 0.01
-local jump = 0.0175
+local gravity = 0.0075
+local jump = 0.015
 local maxFallSpeed = 0.35
 
 local jumping = false
 local jumped = false
+
+local shotInterval = 10
+local shotClock = shotInterval
 
 return {
 
@@ -79,11 +82,12 @@ return {
 	end,
 
 	updatePlayerShot = function(self)
-		if love.mouse.isDown(1) and not isShooting then
-			isShooting = true
+		if love.mouse.isDown(1) and shotClock >= shotInterval then
+			shotClock = 0
+		end
+		if shotClock == 0 then
 			bullets:spawn({
-				size = 0.5,
-				image = 'red',
+				image = 'gray',
 				position = {
 					g3d.camera.position[1],
 					g3d.camera.position[2],
@@ -94,12 +98,12 @@ return {
 					g3d.camera.target[2],
 					g3d.camera.target[3]
 				},
-				speed = 40,
+				speed = 64,
 				player = true
 			})
-		elseif not love.mouse.isDown(1) and isShooting then
-			isShooting = false
 		end
+		shotClock = shotClock + 1
+		if shotClock >= g.clockLimit then shotClock = shotInterval end
 	end,
 
 	updateMovement = function(self)
@@ -134,7 +138,7 @@ return {
 
 		if not jumping or (jumping and jumped) then
 			if self.fuel < self.fuelMax then
-				self.fuel = self.fuel + 3
+				self.fuel = self.fuel + 2
 				if self.fuel > self.fuelMax then self.fuel = self.fuelMax end
 			end
 		end
@@ -200,7 +204,7 @@ return {
 
 	load = function(self)
 		self.fuel = self.fuelMax
-		self.position = setmetatable({0,-5,0}, {})
+		self.position = setmetatable({-20,-3,0}, {})
 		self.speed = setmetatable({0,0,0}, {})
 		self.lastSpeed = setmetatable({0,0,0}, {})
 		self.normal = setmetatable({0,1,0}, {})
@@ -209,7 +213,7 @@ return {
 		self.stepDownSize = 0.075
 		self.collisionModels = {}
 		for i = 1, stage.tileCount do
-			if stage.tiles[i].active and not stage.tiles[i].sky then
+			if stage.tiles[i].active and not stage.tiles[i].sky and not stage.tiles[i].prop then
 				self:addCollisionModel(stage.tiles[i].model)
 			end
 		end

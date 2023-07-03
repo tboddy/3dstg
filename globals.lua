@@ -11,16 +11,19 @@ return {
 	bossMax = 0,
 
 	tau = math.pi * 2,
+	phi = 1.61803398875,
 
 	dt = 1,
 	debug = '',
 
 	colors = {
-		black = hex.rgb('060608'),
+		black = hex.rgb('000000'),
 		greenLight = hex.rgb('92dcba')
 	},
 
 	fogShader = love.graphics.newShader(g3d.shaderpath, 'res/fog.frag'),
+	transparentShader = love.graphics.newShader(g3d.shaderpath, 'res/transparent.frag'),
+	moreTransparentShader = love.graphics.newShader(g3d.shaderpath, 'res/moretransparent.frag'),
 
 	font = function(self)
 		return love.graphics.newFont('res/font.ttf', 32)
@@ -29,6 +32,8 @@ return {
 	resetColor = function(self)
 		love.graphics.setColor(hex.rgb('ffffff'))
 	end,
+
+	mask = love.graphics.newImage('res/mask.png'),
 
 	label = function(self, input, lX, y, lAlign, lLimit, big)
 		local x = 0 if lX then x = lX end
