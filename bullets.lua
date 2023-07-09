@@ -2,7 +2,7 @@ local bulletImages, bulletTypes = {}, {'red', 'green', 'blue', 'yellow', 'gray'}
 
 return {
 
-	count = 2048,
+	count = 3072,
 	current = 0,
 	list = {},
 
@@ -13,9 +13,7 @@ return {
 		for j = 1, self.count do if i == -1 and not self.list[j].active then i = j break end end
 		if i > -1 then
 			self.list[i].active = true
-			self.list[i].position[1] = spawner.position[1]
-			self.list[i].position[2] = spawner.position[2] - 0.5
-			self.list[i].position[3] = spawner.position[3]
+			self.list[i].pos = cpml.vec3.new(spawner.position[1], spawner.position[2] - 0.5, spawner.position[3])
 			self.list[i].target[1] = spawner.target[1]
 			self.list[i].target[2] = spawner.target[2]
 			self.list[i].target[3] = spawner.target[3]
@@ -59,7 +57,6 @@ return {
 		for i = 1, self.count do
 			table.insert(self.list, {
 				active = false,
-				position = {0, 0, 0},
 				image = '',
 				velocity = {0, 0, 0},
 				target = {0, 0, 0},
@@ -81,9 +78,9 @@ return {
 			if self.list[i].active then
 				self.current = self.current + 1
 				if self.list[i].updater then self.list[i].updater(i) end
-				self.list[i].position[1] = self.list[i].position[1] + self.list[i].velocity[1] * g.dt
-				self.list[i].position[2] = self.list[i].position[2] + self.list[i].velocity[2] * g.dt
-				self.list[i].position[3] = self.list[i].position[3] + self.list[i].velocity[3] * g.dt
+				self.list[i].pos.x = self.list[i].pos.x + self.list[i].velocity[1] * g.dt
+				self.list[i].pos.y = self.list[i].pos.y + self.list[i].velocity[2] * g.dt
+				self.list[i].pos.z = self.list[i].pos.z + self.list[i].velocity[3] * g.dt
 
 				if self.list[i].clock >= 2 and not self.list[i].visible then
 					self.list[i].visible = true
@@ -112,11 +109,18 @@ return {
 				if self.list[i].player then
 					for j = 1, enemies.count do
 						if enemies.list[j].active then
-							if enemies.list[j].hitbox:sphereIntersection(self.list[i].position[1], self.list[i].position[2], self.list[i].position[3], 0.5) then
+							if cpml.vec3.dist(self.list[i].pos, enemies.list[j].pos) < 2 then
 								enemies.list[j].hit = true
 								self:killBullet(i, true)
 							end
 						end
+					end
+
+				-- against player
+				else
+					if cpml.vec3.dist(self.list[i].pos, player.pos) < 1 then
+						self:killBullet(i, true)
+						player.health = player.health - 10
 					end
 				end
 
@@ -148,8 +152,8 @@ return {
 			if self.list[i].active and self.list[i].visible then
 		    local x_1, x_2, x_3 = g3d.camera.viewMatrix[1], g3d.camera.viewMatrix[2], g3d.camera.viewMatrix[3]
 		    local y_1, y_2, y_3 = g3d.camera.viewMatrix[5], g3d.camera.viewMatrix[6], g3d.camera.viewMatrix[7]
-		    local x1,y1,z1 = self.list[i].position[1], self.list[i].position[2], self.list[i].position[3]
-		    local x2,y2,z2 = self.list[i].position[1] - y_1, self.list[i].position[2] - y_2, self.list[i].position[3] - y_3
+		    local x1,y1,z1 = self.list[i].pos.x, self.list[i].pos.y, self.list[i].pos.z
+		    local x2,y2,z2 = self.list[i].pos.x - y_1, self.list[i].pos.y - y_2, self.list[i].pos.z - y_3
 		    local r = 0.5
 		    n_x, n_y, n_z = x_1*r, x_2*r, x_3*r
 		    self.list[i].model.mesh:setVertex(1, x1-n_x, y1-n_y, z1-n_z, 0,0)

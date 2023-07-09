@@ -16,10 +16,14 @@ local jumped = false
 local shotInterval = 10
 local shotClock = shotInterval
 
+local shovelModel = g3d.newModel('res/shovel.obj', 'res/shovel.png', {0, 0, 0}, nil, {-1, -1, 1})
+
+
 return {
 
 	fuel = 0,
 	fuelMax = 160,
+	health = 100,
 
 	addCollisionModel = function(self, model)
 		table.insert(self.collisionModels, model)
@@ -30,12 +34,12 @@ return {
 		local bestLength, bx,by,bz, bnx,bny,bnz
 		for _,model in ipairs(self.collisionModels) do
 			local len, x,y,z, nx,ny,nz = model:capsuleIntersection(
-				self.position[1] + mx,
-				self.position[2] + my - 2,
-				self.position[3] + mz,
-				self.position[1] + mx,
-				self.position[2] + my + 2,
-				self.position[3] + mz,
+				self.pos.x + mx,
+				self.pos.y + my - 2,
+				self.pos.z + mz,
+				self.pos.x + mx,
+				self.pos.y + my + 2,
+				self.pos.z + mz,
 				self.radius)
 			if len and (not bestLength or len < bestLength) then
 				bestLength, bx,by,bz, bnx,bny,bnz = len, x,y,z, nx,ny,nz
@@ -46,9 +50,9 @@ return {
 
 	moveAndSlide = function(self, mx,my,mz)
 		local len,x,y,z,nx,ny,nz = self:collisionTest(mx,my,mz)
-		self.position[1] = self.position[1] + mx
-		self.position[2] = self.position[2] + my
-		self.position[3] = self.position[3] + mz
+		self.pos.x = self.pos.x + mx
+		self.pos.y = self.pos.y + my
+		self.pos.z = self.pos.z + mz
 		local ignoreSlopes = ny and ny < -0.7
 		if len then
 			local speedLength = math.sqrt(mx^2 + my^2 + mz^2)
@@ -63,10 +67,10 @@ return {
 					mz = (zNorm - zPush) * speedLength
 				end
 			end
-			self.position[2] = self.position[2] - ny * (len - self.radius)
+			self.pos.y = self.pos.y - ny * (len - self.radius)
 			if not ignoreSlopes then
-				self.position[1] = self.position[1] - nx * (len - self.radius)
-				self.position[3] = self.position[3] - nz * (len - self.radius)
+				self.pos.x = self.pos.x - nx * (len - self.radius)
+				self.pos.z = self.pos.z - nz * (len - self.radius)
 			end
 		end
 		return mx, my, mz, nx, ny, nz
@@ -75,7 +79,7 @@ return {
 	interpolate = function(self, fraction)
 		for i = 1, 3 do
 			if i ~= 2 then
-				g3d.camera.position[i] = self.position[i] + self.speed[i]*fraction
+				g3d.camera.position[i] = self.pos[i == 1 and 'x' or 'z'] + self.speed[i]*fraction
 			end
 		end
 		g3d.camera.lookInDirection()
@@ -160,7 +164,7 @@ return {
 			local len,x,y,z,nx,ny,nz = self:collisionTest(0,self.stepDownSize,0)
 			local mx, my, mz = 0,self.stepDownSize,0
 			if len then
-				self.position[2] = self.position[2] + my
+				self.pos.y = self.pos.y + my
 				local speedLength = math.sqrt(mx^2 + my^2 + mz^2)
 				if speedLength > 0 then
 					local xNorm, yNorm, zNorm = mx / speedLength, my / speedLength, mz / speedLength
@@ -168,7 +172,7 @@ return {
 					local xPush, yPush, zPush = nx * dot, ny * dot, nz * dot
 					my = (yNorm - yPush) * speedLength
 				end
-				self.position[2] = self.position[2] - ny * (len - self.radius)
+				self.pos.y = self.pos.y - ny * (len - self.radius)
 				self.speed[2] = 0
 				self.onGround = true
 			end
@@ -177,15 +181,17 @@ return {
 		self.speed[1], _, self.speed[3], nx, ny, nz = self:moveAndSlide(self.speed[1], 0, self.speed[3])
 
 		for i=1, 3 do
+			local p = i == 1 and 'x' or 'z'
+			if i == 2 then p = 'y' end
 			self.lastSpeed[i] = self.speed[i]
-			g3d.camera.position[i] = self.position[i]
+			g3d.camera.position[i] = self.pos[p]
 		end
 
 		g3d.camera.lookInDirection()
 		self:updatePlayerShot()
-		self.pos.x = self.position[1]
-		self.pos.y = self.position[2]
-		self.pos.z = self.position[3]
+		-- self.pos.x = self.pos.x
+		-- self.pos.y = self.pos.y
+		-- self.pos.z = self.pos.z
 	end,
 
 	update = function(self)
@@ -203,12 +209,18 @@ return {
 			self:updateMovement(g.dt)
 		end
 		self:interpolate(accumulator/frametime)
+
+		shovelModel:setTranslation(g3d.camera.position[1], g3d.camera.position[2], g3d.camera.position[3])
+		shovelModel:setRotation(g3d.camera.viewMatrix[1], g3d.camera.viewMatrix[2], 0)
+	end,
+
+	draw = function(self)
+		-- shovelModel:draw()
 	end,
 
 	load = function(self)
 		self.fuel = self.fuelMax
-		self.position = setmetatable({-20,-3,0}, {})
-		self.pos = cpml.vec3.new(self.position[1], self.position[2], self.position[3])
+		self.pos = cpml.vec3.new(-20, -3, 0)
 		self.speed = setmetatable({0,0,0}, {})
 		self.lastSpeed = setmetatable({0,0,0}, {})
 		self.normal = setmetatable({0,1,0}, {})

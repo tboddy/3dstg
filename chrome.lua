@@ -54,7 +54,7 @@ return {
 
 	drawHealth = function()
 
-		g:label('100', 0, bottomY - grid + 4, 'center', g.width, true)
+		g:label(player.health, 0, bottomY - grid + 4, 'center', g.width, true)
 
 	end,
 

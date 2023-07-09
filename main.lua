@@ -11,8 +11,6 @@ bullets = require 'bullets'
 enemies = require 'enemies'
 player = require 'player'
 
-local winWidth, winHeight = love.window.getDesktopDimensions()
-
 function love.load()
 	love.graphics.setBackgroundColor(g.colors.black)
 	tick.framerate = 60
@@ -62,6 +60,7 @@ function love.draw()
 	stage:draw()
 	bullets:draw()
 	enemies:draw()
+	player:draw()
 	chrome:draw()
 	maid64.finish()
 end

@@ -51,7 +51,6 @@ return {
 		for i = 1, self.count do
 			table.insert(self.list, {
 				active = false,
-				position = {0, 0, 0},
 				velocity = {0, 0, 0},
 				clock = 0,
 				model = nil,
