@@ -22,8 +22,8 @@ local shovelModel = g3d.newModel('res/shovel.obj', 'res/shovel.png', {0, 0, 0}, 
 return {
 
 	fuel = 0,
-	fuelMax = 160,
-	health = 100,
+	fuelMax = 112,
+	health = 80,
 
 	addCollisionModel = function(self, model)
 		table.insert(self.collisionModels, model)
@@ -129,7 +129,7 @@ return {
 
 		if jumping and not jumped then
 			if love.keyboard.isDown('space') and self.fuel > 0 then
-				self.fuel = self.fuel - 4
+				self.fuel = self.fuel - 3
 				self.speed[2] = self.speed[2] - jump
 				if self.fuel <= 1 then
 					self.fuel = 0

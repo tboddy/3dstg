@@ -1,9 +1,9 @@
-local grid = 32
+local grid = 8 * g.scale
 local bottomY = g.height - grid * 2
 local rightX = (g.width - grid)
 
-local bossW = g.width - grid * 11
-local barH = 24
+local bossW = grid * 41 
+local barH = grid - g.scale
 
 local aimPos = {0, 0}
 
@@ -17,11 +17,11 @@ return {
 	drawFuel = function()
 		g:label('UP', grid, bottomY)
 		love.graphics.setColor(g.colors.black)
-		love.graphics.rectangle('line', grid * 2.5, bottomY + 4 + 2, player.fuelMax * 2, barH)
+		love.graphics.rectangle('line', grid * 3.5, bottomY + g.scale, player.fuelMax * 2, barH)
 		love.graphics.setColor(g.colors.greenLight)
-		love.graphics.rectangle('line', grid * 2.5, bottomY + 4, player.fuelMax * 2, barH)
+		love.graphics.rectangle('line', grid * 3.5, bottomY, player.fuelMax * 2, barH)
 		if player.fuel > 0 then
-			love.graphics.rectangle('fill', grid * 2.5, bottomY + 4, player.fuel * 2, barH)
+			love.graphics.rectangle('fill', grid * 3.5, bottomY, player.fuel * 2, barH)
 		end
 	end,
 
@@ -31,7 +31,7 @@ return {
 	end,
 
 	drawAim = function(self)
-		local crossOff, crossSize = 8, 24
+		local crossOff, crossSize = 4, 12
 		love.graphics.setColor(g.colors.greenLight)
 		love.graphics.line(aimPos.x - crossSize, aimPos.y, aimPos.x - crossOff, aimPos.y)
 		love.graphics.line(aimPos.x + crossOff, aimPos.y, aimPos.x + crossSize, aimPos.y)
@@ -44,24 +44,22 @@ return {
 	drawBoss = function()
 		if g.bossHealth > 0 then
 			love.graphics.setColor(g.colors.black)
-			love.graphics.rectangle('line', grid, grid + 4 + 2, g.bossMax * (bossW / g.bossMax), barH)
+			love.graphics.rectangle('line', grid, grid + g.scale, g.bossMax * (bossW / g.bossMax), barH)
 			love.graphics.setColor(g.colors.greenLight)
-			love.graphics.rectangle('line', grid, grid + 4, g.bossMax * (bossW / g.bossMax), barH)
-			love.graphics.rectangle('fill', grid, grid + 4, g.bossHealth * (bossW / g.bossMax), barH)
-			g:label('MIKE GOUTOKUJI', grid, grid * 2.25)
+			love.graphics.rectangle('line', grid, grid, g.bossMax * (bossW / g.bossMax), barH)
+			love.graphics.rectangle('fill', grid, grid, g.bossHealth * (bossW / g.bossMax), barH)
+			g:label('MIKE GOUTOKUJI', grid, grid * 2.5)
 		end
 	end,
 
 	drawHealth = function()
-
-		g:label(player.health, 0, bottomY - grid + 4, 'center', g.width, true)
-
+		g:label(player.health, 0, bottomY - grid + g.scale, 'center', g.width, true)
 	end,
 
 	drawDebug = function()
 		g:label(enemies.current .. ' ENM', 0, bottomY - grid * 2.5, 'right', rightX)
 		g:label(bullets.current .. ' BUL', 0, bottomY - grid * 1.25, 'right', rightX)
-		g:label(love.timer.getFPS() .. ' FPS', 0, bottomY, 'right', rightX)
+		g:label((love.timer.getFPS() * 2) .. ' FPS', 0, bottomY, 'right', rightX)
 	end,
 
 	load = function()

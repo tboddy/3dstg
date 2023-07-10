@@ -13,7 +13,7 @@ player = require 'player'
 
 function love.load()
 	love.graphics.setBackgroundColor(g.colors.black)
-	tick.framerate = 60
+	tick.framerate = 30
 	love.window.setTitle('lol rak game')
 	local windowConfig = {
 		vsync = false,
@@ -25,7 +25,7 @@ function love.load()
 	maid64.setup(g.width, g.height)
 	love.graphics.setDefaultFilter('nearest')
 	love.graphics.setLineStyle('rough')
-	love.graphics.setLineWidth(2)
+	love.graphics.setLineWidth(g.scale)
 	bullets:load()
 	enemies:load()
 	stage:load()

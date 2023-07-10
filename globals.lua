@@ -1,11 +1,11 @@
 return {
 
-	scale = 1,
+	scale = 2,
 	clock = 0,
 	clockLimit = 65535,
 
-	width = 1920,
-	height = 1080,
+	width = 1920 / 2,
+	height = 1080 / 2,
 
 	bossHealth = 0,
 	bossMax = 0,
@@ -26,11 +26,11 @@ return {
 	moreTransparentShader = love.graphics.newShader(g3d.shaderpath, 'res/moretransparent.frag'),
 
 	font = function(self)
-		return love.graphics.newFont('res/font.ttf', 32)
+		return love.graphics.newFont('res/Ibara.ttf', 7 * self.scale)
 	end,
 
 	bigFont = function(self)
-		return love.graphics.newFont('res/font.ttf', 64)
+		return love.graphics.newFont('res/Ibara.ttf', 14 * self.scale)
 	end,
 
 	resetColor = function(self)

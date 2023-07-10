@@ -65,7 +65,7 @@ local function mikeTwo(i)
 	if enemies.list[i].clock % 60 >= 30 then image = 'green' end
 	if enemies.list[i].clock % 60 >= 45 then image = 'yellow' end
 	if enemies.list[i].clock % 240 == 0 then enemies.list[i].nums[1] = math.random(0, g.tau) end
-	for j = 1, 3 do
+	for j = 1, 2 do
 		bullets:spawn({
 			image = image,
 			position = {
@@ -116,23 +116,22 @@ return {
 			g.bossHealth = 100
 			g.bossMax = g.bossHealth
 			enemies:spawn({
-				position = {0, -2, 0},
+				position = {0, -1, 0},
 				size = 3,
 				boss = true,
-				speed = 0.35,
+				speed = 0.5,
 				image = 'mike',
 				health = g.bossHealth,
 				updater = function(i)
 					g.bossHealth = enemies.list[i].health
 					bossMove(i)
-					bossCircle(i)
+					-- bossCircle(i)
 					-- mikeTwo(i)
 					-- mikeThree(i)
 					if enemies.list[i].health > 75 then mikeOne(i)
 					elseif enemies.list[i].health > 50 then mikeTwo(i)
 					elseif enemies.list[i].health > 25 then mikeOne(i)
 					else mikeTwo(i) end
-
 				end
 			})
 		end

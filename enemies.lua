@@ -7,7 +7,6 @@ return {
 	list = {},
 
 	spawn = function(self, spawner)
-		spawner.size = 3
 		i = -1
 		for j = 1, self.count do if i == -1 and not self.list[j].active then i = j break end end
 		if i > -1 then
@@ -41,8 +40,6 @@ return {
 			    {1, 0,-1},
 			    {-1,0, 1}}, circleImage)
 			end
-			self.list[i].hitbox = g3d.newModel('res/enemies/hitbox.obj', 'res/enemies/hitbox.png', spawner.position)
-			self.list[i].hitbox:setTransform({0, -spawner.size / 2, 0}, nil, {spawner.size / 4 * 3,spawner.size / 4 * 3,spawner.size / 4 * 3})
 			self.list[i].updater = spawner.updater or nil
 		end
 	end,
@@ -54,7 +51,6 @@ return {
 				velocity = {0, 0, 0},
 				clock = 0,
 				model = nil,
-				hitbox = nil,
 				circle = nil,
 				updater = nil,
 				hit = false,
@@ -72,7 +68,6 @@ return {
 		end
 		self.list[i].active = false
 		self.list[i].model = nil
-		self.list[i].hitbox = nil
 	end,
 
 	hitEnemy = function(self, i)
@@ -90,7 +85,6 @@ return {
 				self.current = self.current + 1
 				if self.list[i].updater then self.list[i].updater(i) end
 				if self.list[i].active then
-			    self.list[i].hitbox:setTransform({self.list[i].pos.x, self.list[i].pos.y, self.list[i].pos.z})
 					self.list[i].clock = self.list[i].clock + 1
 					if self.list[i].clock >= g.clockLimit then self.list[i].clock = 60 end
 					if self.list[i].hit then self:hitEnemy(i) end
@@ -129,8 +123,8 @@ return {
 			    self.list[i].circle.mesh:setVertex(6, x1+n_x, y1+n_y - circleSize / 2, z1+n_z, 1,0)
 			    self.list[i].circle:draw(g.moreTransparentShader)
 			  end
+			  
 		    self.list[i].model:draw(g.fogShader)
-		    -- self.list[i].hitbox:draw()
 			end
 		end
 	end

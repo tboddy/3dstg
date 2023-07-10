@@ -1,40 +1,43 @@
 local bulletImages, bulletTypes = {}, {'red', 'green', 'blue', 'yellow', 'gray'}
+local killClock = 0
 
 return {
 
-	count = 3072,
+	count = 768,
 	current = 0,
 	list = {},
 
 	killAll = false,
 
 	spawn = function(self, spawner)
-		i = -1
-		for j = 1, self.count do if i == -1 and not self.list[j].active then i = j break end end
-		if i > -1 then
-			self.list[i].active = true
-			self.list[i].pos = cpml.vec3.new(spawner.position[1], spawner.position[2] - 0.5, spawner.position[3])
-			self.list[i].target[1] = spawner.target[1]
-			self.list[i].target[2] = spawner.target[2]
-			self.list[i].target[3] = spawner.target[3]
-			self.list[i].clock = 0
-			self.list[i].visible = spawner.player or false
-			self.list[i].size = spawner.size or 1
-			self.list[i].nums = {}
-			self.list[i].player = spawner.player or false
-			self.list[i].speed = spawner.speed
-			self.list[i].velocity[1] = (spawner.target[1] - spawner.position[1]) * spawner.speed
-			self.list[i].velocity[2] = (spawner.target[2] - spawner.position[2]) * spawner.speed
-			self.list[i].velocity[3] = (spawner.target[3] - spawner.position[3]) * spawner.speed
-			self.list[i].image = spawner.image
-			self.list[i].updater = spawner.updater or nil
-			self.list[i].model = g3d.newModel({
-		    {-1,0,-1},
-		    {1, 0,-1},
-		    {-1,0, 1},
-		    {1, 0, 1},
-		    {1, 0,-1},
-		    {-1,0, 1}})
+		if (killClock == 0 and not spawner.player) or spawner.player then
+			i = -1
+			for j = 1, self.count do if i == -1 and not self.list[j].active then i = j break end end
+			if i > -1 then
+				self.list[i].active = true
+				self.list[i].pos = cpml.vec3.new(spawner.position[1], spawner.position[2] - 0.5, spawner.position[3])
+				self.list[i].target[1] = spawner.target[1]
+				self.list[i].target[2] = spawner.target[2]
+				self.list[i].target[3] = spawner.target[3]
+				self.list[i].clock = 0
+				self.list[i].visible = spawner.player or false
+				self.list[i].size = spawner.size or 1
+				self.list[i].nums = {}
+				self.list[i].player = spawner.player or false
+				self.list[i].speed = spawner.speed
+				self.list[i].velocity[1] = (spawner.target[1] - spawner.position[1]) * spawner.speed
+				self.list[i].velocity[2] = (spawner.target[2] - spawner.position[2]) * spawner.speed
+				self.list[i].velocity[3] = (spawner.target[3] - spawner.position[3]) * spawner.speed
+				self.list[i].image = spawner.image
+				self.list[i].updater = spawner.updater or nil
+				self.list[i].model = g3d.newModel({
+			    {-1,0,-1},
+			    {1, 0,-1},
+			    {-1,0, 1},
+			    {1, 0, 1},
+			    {1, 0,-1},
+			    {-1,0, 1}})
+			end
 		end
 	end,
 
@@ -109,7 +112,7 @@ return {
 				if self.list[i].player then
 					for j = 1, enemies.count do
 						if enemies.list[j].active then
-							if cpml.vec3.dist(self.list[i].pos, enemies.list[j].pos) < 2 then
+							if cpml.vec3.dist(self.list[i].pos, enemies.list[j].pos) < enemies.list[j].size / 2 then
 								enemies.list[j].hit = true
 								self:killBullet(i, true)
 							end
@@ -118,14 +121,15 @@ return {
 
 				-- against player
 				else
-					if cpml.vec3.dist(self.list[i].pos, player.pos) < 1 then
-						self:killBullet(i, true)
-						player.health = player.health - 10
-					end
+					-- if cpml.vec3.dist(self.list[i].pos, player.pos) < 0.75 then
+					-- 	self:killBullet(i, true)
+					-- 	player.health = player.health - 10
+					-- 	bullets.killAll = true
+					-- end
 				end
 
 				-- kill all
-				if self.killAll and not self.list[i].player then self:killBullet(i) end
+				if killClock > 0 and not self.list[i].player then self:killBullet(i) end
 
 				-- if self.list[i].position[2] > 1 or
 				-- 	self.list[i].position[2] < -self.bulletLimit or
@@ -134,7 +138,7 @@ return {
 				-- 	self.list[i].position[3] > self.bulletLimit or
 				-- 	self.list[i].position[3] < -self.bulletLimit
 				-- 	then self:killBullet(i) end
-				if self.list[i].clock > 240 then self:killBullet(i) end
+				if self.list[i].clock > 220 then self:killBullet(i) end
 
 				self.list[i].clock = self.list[i].clock + 1
 
@@ -142,6 +146,10 @@ return {
 		end
 		if self.killAll then
 			self.killAll = false
+			killClock = 20
+		end
+		if killClock > 0 then
+			killClock = killClock - 1
 		end
 	end,
 
