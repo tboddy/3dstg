@@ -33,9 +33,9 @@ local function mikeOne(i)
 			enemies.list[i].nums[3] = enemies.list[i].clock % 240 < 120 and 1 or -1
 		end
 		local count, angle, image = 24, enemies.list[i].nums[1], 'red'
-		if enemies.list[i].clock % 60 >= 15 then image = 'blue' end
-		if enemies.list[i].clock % 60 >= 30 then image = 'green' end
-		if enemies.list[i].clock % 60 >= 45 then image = 'yellow' end
+		if enemies.list[i].clock % 120 >= 15 then image = 'blue' end
+		if enemies.list[i].clock % 120 >= 30 then image = 'green' end
+		if enemies.list[i].clock % 120 >= 45 then image = 'yellow' end
 		for j = 1, count do
 			bullets:spawn({
 				image = image,
@@ -49,7 +49,7 @@ local function mikeOne(i)
 					enemies.list[i].pos.y + enemies.list[i].nums[2],
 					enemies.list[i].pos.z + math.sin(angle)
 				},
-				speed = enemies.list[i].clock % 60 < 30 and 15 or 10
+				speed = enemies.list[i].clock % 120 < 30 and 8 or 16
 			})
 			angle = angle + g.tau / count
 		end
@@ -78,7 +78,7 @@ local function mikeTwo(i)
 				enemies.list[i].pos.y + 0.3 - math.random(),
 				enemies.list[i].pos.z + math.sin(enemies.list[i].nums[1] * j)
 			},
-			speed = j % 2 == 0 and 10 or 15
+			speed = j % 2 == 1 and 8 or 16
 		})
 	end
 	enemies.list[i].nums[1] = enemies.list[i].nums[1] + math.random(0, math.pi)
@@ -112,29 +112,29 @@ return {
 
 	mike = function()
 
-		if stage.clock == 0 then
-			g.bossHealth = 100
-			g.bossMax = g.bossHealth
-			enemies:spawn({
-				position = {0, -1, 0},
-				size = 3,
-				boss = true,
-				speed = 0.5,
-				image = 'mike',
-				health = g.bossHealth,
-				updater = function(i)
-					g.bossHealth = enemies.list[i].health
-					bossMove(i)
-					-- bossCircle(i)
-					-- mikeTwo(i)
-					-- mikeThree(i)
-					if enemies.list[i].health > 75 then mikeOne(i)
-					elseif enemies.list[i].health > 50 then mikeTwo(i)
-					elseif enemies.list[i].health > 25 then mikeOne(i)
-					else mikeTwo(i) end
-				end
-			})
-		end
+		-- if stage.clock == 0 then
+		-- 	g.bossHealth = 60
+		-- 	g.bossMax = g.bossHealth
+		-- 	enemies:spawn({
+		-- 		position = {0, -1.5, 0},
+		-- 		size = 3,
+		-- 		boss = true,
+		-- 		speed = 0.25,
+		-- 		image = 'mike',
+		-- 		health = g.bossHealth,
+		-- 		updater = function(i)
+		-- 			g.bossHealth = enemies.list[i].health
+		-- 			bossMove(i)
+		-- 			-- bossCircle(i)
+		-- 			-- mikeTwo(i)
+		-- 			-- mikeThree(i)
+		-- 			if enemies.list[i].health > (g.bossMax / 4 * 3) then mikeOne(i)
+		-- 			elseif enemies.list[i].health > (g.bossMax / 2) then mikeTwo(i)
+		-- 			elseif enemies.list[i].health > (g.bossMax / 4) then mikeOne(i)
+		-- 			else mikeTwo(i) end
+		-- 		end
+		-- 	})
+		-- end
 
 	end
 

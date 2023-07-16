@@ -4,10 +4,10 @@ local accumulator = 0
 local frametime = 1/60
 local rollingAverage = {}
 
-local speed = 0.06
+local speed = 0.055
 local friction = 0.8
 local gravity = 0.0075
-local jump = 0.015
+local jump = 0.014
 local maxFallSpeed = 0.35
 
 local jumping = false
@@ -22,8 +22,8 @@ local shovelModel = g3d.newModel('res/shovel.obj', 'res/shovel.png', {0, 0, 0}, 
 return {
 
 	fuel = 0,
-	fuelMax = 112,
-	health = 80,
+	fuelMax = 88,
+	health = 100,
 
 	addCollisionModel = function(self, model)
 		table.insert(self.collisionModels, model)
@@ -94,15 +94,15 @@ return {
 				image = 'gray',
 				position = {
 					g3d.camera.position[1],
-					g3d.camera.position[2],
+					g3d.camera.position[2] + 1,
 					g3d.camera.position[3]
 				},
 				target = {
 					g3d.camera.target[1],
-					g3d.camera.target[2],
+					g3d.camera.target[2] + 1,
 					g3d.camera.target[3]
 				},
-				speed = 64,
+				speed = 80,
 				player = true
 			})
 		end
@@ -220,7 +220,7 @@ return {
 
 	load = function(self)
 		self.fuel = self.fuelMax
-		self.pos = cpml.vec3.new(-20, -3, 0)
+		self.pos = cpml.vec3.new(0, -3, 0)
 		self.speed = setmetatable({0,0,0}, {})
 		self.lastSpeed = setmetatable({0,0,0}, {})
 		self.normal = setmetatable({0,1,0}, {})

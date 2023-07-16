@@ -36,7 +36,8 @@ return {
 			    {-1,0, 1},
 			    {1, 0, 1},
 			    {1, 0,-1},
-			    {-1,0, 1}})
+			    {-1,0, 1}}, bulletImages[self.list[i].image][1])
+				self.list[i].model:compress()
 			end
 		end
 	end,
@@ -67,7 +68,7 @@ return {
 				clock = 0,
 				visible = false,
 				player = false,
-				model = false,
+				model = nil,
 				size = 1
 			})
 		end
@@ -89,13 +90,13 @@ return {
 					self.list[i].visible = true
 				end
 
-				if self.list[i].clock % 16 == 0 then
+				if self.list[i].clock % 12 == 0 then
 					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][1])
-				elseif self.list[i].clock % 16 == 4 then
+				elseif self.list[i].clock % 12 == 3 then
 					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][2])
-				elseif self.list[i].clock % 16 == 8 then
+				elseif self.list[i].clock % 12 == 6 then
 					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][3])
-				elseif self.list[i].clock % 16 == 12 then
+				elseif self.list[i].clock % 12 == 9 then
 					self.list[i].model.mesh:setTexture(bulletImages[self.list[i].image][4])
 				end
 
@@ -108,40 +109,59 @@ return {
 				-- 	end
 				-- end
 
-				-- against enemies
-				if self.list[i].player then
-					for j = 1, enemies.count do
-						if enemies.list[j].active then
-							if cpml.vec3.dist(self.list[i].pos, enemies.list[j].pos) < enemies.list[j].size / 2 then
-								enemies.list[j].hit = true
-								self:killBullet(i, true)
+				-- against y
+				if self.list[i].pos.y > 1 or self.list[i].pos.y < -20 then
+					if self.list[i].pos.y > 1 then
+						explosions:spawn({
+							image = self.list[i].image,
+							size = 2,
+							pos = {
+								self.list[i].pos.x,
+								self.list[i].pos.y,
+								self.list[i].pos.z
+							}
+						})
+					end
+					self:killBullet(i, true)
+				else
+
+					-- against clock
+					if self.list[i].clock > 240 then self:killBullet(i)
+
+					-- kill all
+					elseif
+						killClock > 0 and not self.list[i].player then self:killBullet(i)
+					else
+
+						-- against enemies
+						if self.list[i].player then for j = 1, enemies.count do
+							if enemies.list[j].active and not enemies.list[j].gem then
+								if cpml.vec3.dist(self.list[i].pos, enemies.list[j].pos) < enemies.list[j].size then
+									enemies.list[j].hit = true
+									explosions:spawn({
+										image = 'gray',
+										size = (enemies.list[j].health == 1 and 8 or 4),
+										pos = {
+											enemies.list[j].pos.x,
+											enemies.list[j].pos.y,
+											enemies.list[j].pos.z
+										}
+									})
+									self:killBullet(i, true)
+								end
 							end
 						end
+
+						-- against player
+						else if cpml.vec3.dist(self.list[i].pos, player.pos) < 1 then
+							self:killBullet(i, true)
+							player.health = player.health - 20
+							bullets.killAll = true
+						end end
+
 					end
-
-				-- against player
-				else
-					-- if cpml.vec3.dist(self.list[i].pos, player.pos) < 0.75 then
-					-- 	self:killBullet(i, true)
-					-- 	player.health = player.health - 10
-					-- 	bullets.killAll = true
-					-- end
 				end
-
-				-- kill all
-				if killClock > 0 and not self.list[i].player then self:killBullet(i) end
-
-				-- if self.list[i].position[2] > 1 or
-				-- 	self.list[i].position[2] < -self.bulletLimit or
-				-- 	self.list[i].position[1] > self.bulletLimit or
-				-- 	self.list[i].position[1] < -self.bulletLimit or
-				-- 	self.list[i].position[3] > self.bulletLimit or
-				-- 	self.list[i].position[3] < -self.bulletLimit
-				-- 	then self:killBullet(i) end
-				if self.list[i].clock > 220 then self:killBullet(i) end
-
 				self.list[i].clock = self.list[i].clock + 1
-
 			end
 		end
 		if self.killAll then
@@ -170,7 +190,7 @@ return {
 		    self.list[i].model.mesh:setVertex(4, x2-n_x, y2-n_y, z2-n_z, 0,1)
 		    self.list[i].model.mesh:setVertex(5, x2+n_x, y2+n_y, z2+n_z, 1,1)
 		    self.list[i].model.mesh:setVertex(6, x1+n_x, y1+n_y, z1+n_z, 1,0)
-		    if self.list[i].player then self.list[i].model:draw(g.transparentShader)
+		    if self.list[i].player then self.list[i].model:draw(g.fogShader)
 		    else self.list[i].model:draw(g.fogShader) end
 			end
 		end

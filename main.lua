@@ -7,6 +7,7 @@ hex = require 'lib.hex'
 g = require 'globals'
 chrome = require 'chrome'
 stage = require 'stage'
+explosions = require 'explosions'
 bullets = require 'bullets'
 enemies = require 'enemies'
 player = require 'player'
@@ -25,7 +26,8 @@ function love.load()
 	maid64.setup(g.width, g.height)
 	love.graphics.setDefaultFilter('nearest')
 	love.graphics.setLineStyle('rough')
-	love.graphics.setLineWidth(g.scale)
+	love.graphics.setLineWidth(1)
+	explosions:load()
 	bullets:load()
 	enemies:load()
 	stage:load()
@@ -36,6 +38,7 @@ function love.update(dt)
 	g.dt = dt
 	player:update()
 	stage:update()
+	explosions:update()
 	bullets:update()
 	enemies:update()
 	chrome:update()
@@ -60,6 +63,7 @@ function love.draw()
 	stage:draw()
 	bullets:draw()
 	enemies:draw()
+	explosions:draw()
 	player:draw()
 	chrome:draw()
 	maid64.finish()
